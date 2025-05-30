@@ -1,3 +1,4 @@
+// --- page.tsx ---
 "use client"
 
 import { MenuBar } from "@/components/menu-bar"
@@ -53,16 +54,12 @@ export default function Page() {
         <ThemeToggle />
       </div>
 
-      {/* MenuBar */}
-      <MenuBar />
-
-      {/* Senin butonların için görünmeyen bağlantılar */}
-      <div className="hidden">
-        <button onClick={applySpoof}></button>
-        <button onClick={applySpoofV2}></button>
-        <button onClick={clearSpoof}></button>
-        <button onClick={checkSpoof}></button>
-      </div>
+      <MenuBar
+        onApplySpoof={applySpoof}
+        onApplySpoofV2={applySpoofV2}
+        onClearSpoof={clearSpoof}
+        onCheckSpoof={checkSpoof}
+      />
     </div>
   )
 }
