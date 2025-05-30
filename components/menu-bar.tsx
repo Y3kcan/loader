@@ -3,13 +3,12 @@
 import type * as React from "react"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Shield, ShieldOff, Search, Loader2 } from "lucide-react"
+import { Shield, ShieldOff, Search } from "lucide-react"
 import { useTheme } from "next-themes"
 
 interface MenuItem {
   icon: React.ReactNode
   label: string
-  href: string
   gradient: string
   iconColor: string
   fillColor: string
@@ -20,7 +19,6 @@ const menuItems: MenuItem[] = [
   {
     icon: <Shield className="h-5 w-5" />,
     label: "Apply Spoof",
-    href: "#",
     gradient: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
     iconColor: "text-blue-500",
     fillColor: "linear-gradient(135deg, rgba(59,130,246,0.4) 0%, rgba(37,99,235,0.2) 100%)",
@@ -29,7 +27,6 @@ const menuItems: MenuItem[] = [
   {
     icon: <Shield className="h-5 w-5" />,
     label: "Apply Spoof v2",
-    href: "#",
     gradient: "radial-gradient(circle, rgba(147,51,234,0.15) 0%, rgba(126,34,206,0.06) 50%, rgba(107,33,168,0) 100%)",
     iconColor: "text-purple-500",
     fillColor: "linear-gradient(135deg, rgba(147,51,234,0.4) 0%, rgba(126,34,206,0.2) 100%)",
@@ -38,7 +35,6 @@ const menuItems: MenuItem[] = [
   {
     icon: <ShieldOff className="h-5 w-5" />,
     label: "Clear Spoof",
-    href: "#",
     gradient: "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)",
     iconColor: "text-red-500",
     fillColor: "linear-gradient(135deg, rgba(239,68,68,0.4) 0%, rgba(220,38,38,0.2) 100%)",
@@ -47,7 +43,6 @@ const menuItems: MenuItem[] = [
   {
     icon: <Search className="h-5 w-5" />,
     label: "Check Spoof",
-    href: "#",
     gradient: "radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(147,51,234,0.06) 50%, rgba(126,34,206,0) 100%)",
     iconColor: "text-violet-500",
     fillColor: "linear-gradient(135deg, rgba(168,85,247,0.4) 0%, rgba(147,51,234,0.2) 100%)",
@@ -92,20 +87,20 @@ export function MenuBar() {
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined
-    const duration = 4000 // 4 seconds in milliseconds
-    const frameRate = 60 // frames per second
+    const duration = 4000
+    const frameRate = 60
     const totalFrames = (duration / 1000) * frameRate
     const incrementPerFrame = 100 / totalFrames
 
     if (isProcessing) {
-      setProgress(0) // Ensure it starts from 0
+      setProgress(0)
       intervalId = setInterval(() => {
         setProgress((prev) => {
           const newProgress = prev + incrementPerFrame
           if (newProgress >= 100) {
             if (intervalId) clearInterval(intervalId)
             setIsProcessing(false)
-            return 100 // Cap at 100%
+            return 100
           }
           return newProgress
         })
@@ -113,9 +108,7 @@ export function MenuBar() {
     }
 
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId)
-      }
+      if (intervalId) clearInterval(intervalId)
     }
   }, [isProcessing])
 
@@ -124,23 +117,33 @@ export function MenuBar() {
       const timer = setTimeout(() => {
         setSelectedItem(null)
         setProgress(0)
-      }, 2000) // Wait 2 seconds after completion before returning to menu
-
+      }, 2000)
       return () => clearTimeout(timer)
     }
   }, [isProcessing, progress, selectedItem])
 
-  const handleItemClick = (index: number, href: string) => {
+  const handleItemClick = (index: number, label: string) => {
     setSelectedItem(index)
-    setProgress(0) // Reset progress for new click
+    setProgress(0)
     setIsProcessing(true)
 
-    if (href !== "#") {
-      // Potentially navigate: window.location.href = href
+    const endpoints: Record<string, string> = {
+      "Apply Spoof": "/apply",
+      "Apply Spoof v2": "/applyv2",
+      "Clear Spoof": "/clear",
+      "Check Spoof": "/check",
+    }
+
+    const endpoint = endpoints[label]
+
+    if (endpoint) {
+      fetch(`http://localhost:6969${endpoint}`, { method: "POST" })
+        .then(res => res.text())
+        .then(data => console.log(`[${label} Success]:`, data))
+        .catch(err => console.error(`[${label} Error]:`, err))
     }
   }
 
-  // Normal menu state
   if (!isProcessing && (selectedItem === null || progress !== 100)) {
     return (
       <motion.nav
@@ -170,7 +173,7 @@ export function MenuBar() {
                   }}
                 />
                 <motion.button
-                  onClick={() => handleItemClick(index, item.href)}
+                  onClick={() => handleItemClick(index, item.label)}
                   className="flex items-center justify-center gap-2 px-4 py-2 relative z-10 bg-transparent transition-colors rounded-xl cursor-pointer border-none text-muted-foreground group-hover:text-foreground"
                   variants={itemVariants}
                   transition={sharedTransition}
@@ -182,7 +185,7 @@ export function MenuBar() {
                   <span>{item.label}</span>
                 </motion.button>
                 <motion.button
-                  onClick={() => handleItemClick(index, item.href)}
+                  onClick={() => handleItemClick(index, item.label)}
                   className="flex items-center justify-center gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent transition-colors rounded-xl cursor-pointer border-none text-muted-foreground group-hover:text-foreground"
                   variants={backVariants}
                   transition={sharedTransition}
@@ -201,18 +204,16 @@ export function MenuBar() {
     )
   }
 
-  // Loading/Complete state
   return (
     <motion.div
       className="p-2 rounded-2xl backdrop-blur-lg border border-border/40 shadow-lg relative overflow-hidden"
       style={{
         background: "linear-gradient(to bottom, hsl(var(--background))/80, hsl(var(--background))/40)",
         width: "fit-content",
-        minWidth: "400px", // Ensure consistent width
+        minWidth: "400px",
       }}
     >
       <div className="relative h-[44px] rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700">
-        {/* Progress fill */}
         <motion.div
           className="absolute left-0 top-0 h-full rounded-xl"
           initial={{ width: "0%" }}
@@ -222,13 +223,11 @@ export function MenuBar() {
             backgroundColor: selectedItem !== null ? menuItems[selectedItem].solidColor : "transparent",
           }}
         />
-
-        {/* Loading text */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex items-center gap-2 text-foreground font-medium">
             {isProcessing ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="animate-spin">⏳</span>
                 <span>Loading {Math.round(progress)}%</span>
               </>
             ) : progress === 100 ? (
