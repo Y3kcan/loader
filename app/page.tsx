@@ -5,6 +5,15 @@ import { ThemeToggle, DiscordButton, MusicButton, GitBookButton, CheatGlobalButt
 import { AuthorCredit } from "@/components/author-credit"
 
 export default function Page() {
+  const handleSpoof = () => {
+    fetch("http://localhost:6969/inject", {
+      method: "POST"
+    })
+      .then(res => res.text())
+      .then(data => console.log("[Inject Success]:", data))
+      .catch(err => console.error("[Inject Error]:", err));
+  };
+
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center p-4 relative"
@@ -24,8 +33,17 @@ export default function Page() {
         <DiscordButton />
         <ThemeToggle />
       </div>
+
       {/* MenuBar artık tam ortada */}
       <MenuBar />
+
+      {/* SPOOF butonu */}
+      <button
+        onClick={handleSpoof}
+        className="mt-8 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg transition duration-200"
+      >
+        SPOOF
+      </button>
     </div>
   )
 }
