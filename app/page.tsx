@@ -1,4 +1,3 @@
-// --- page.tsx ---
 "use client"
 
 import { MenuBar } from "@/components/menu-bar"
@@ -63,62 +62,3 @@ export default function Page() {
     </div>
   )
 }
-
-
-// --- spoof_listener.py ---
-import http.server
-import socketserver
-import subprocess
-
-PORT = 6969
-
-class Handler(http.server.BaseHTTPRequestHandler):
-    def _set_headers(self):
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', '*')
-
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self._set_headers()
-        self.end_headers()
-
-    def do_POST(self):
-        if self.path == '/apply':
-            print("[*] Apply Spoof triggered")
-            subprocess.Popen('cmd.exe /c start cmd.exe /k "echo Hello World"', shell=True)
-            self.send_response(200)
-            self._set_headers()
-            self.end_headers()
-            self.wfile.write(b'OK')
-        elif self.path == '/applyv2':
-            print("[*] Apply Spoof v2 triggered")
-            subprocess.Popen('cmd.exe /c start cmd.exe /k "echo Apply Spoof V2"', shell=True)
-            self.send_response(200)
-            self._set_headers()
-            self.end_headers()
-            self.wfile.write(b'OK')
-        elif self.path == '/clear':
-            print("[*] Clear Spoof triggered")
-            subprocess.Popen('cmd.exe /c start cmd.exe /k "echo Clear Spoof"', shell=True)
-            self.send_response(200)
-            self._set_headers()
-            self.end_headers()
-            self.wfile.write(b'OK')
-        elif self.path == '/check':
-            print("[*] Check Spoof triggered")
-            subprocess.Popen('cmd.exe /c start cmd.exe /k "echo Check Spoof"', shell=True)
-            self.send_response(200)
-            self._set_headers()
-            self.end_headers()
-            self.wfile.write(b'OK')
-        else:
-            self.send_response(404)
-            self._set_headers()
-            self.end_headers()
-            self.wfile.write(b'NOT FOUND')
-
-if __name__ == "__main__":
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"[+] Listening on port {PORT}")
-        httpd.serve_forever()
