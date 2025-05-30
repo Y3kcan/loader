@@ -5,13 +5,32 @@ import { ThemeToggle, DiscordButton, MusicButton, GitBookButton, CheatGlobalButt
 import { AuthorCredit } from "@/components/author-credit"
 
 export default function Page() {
-  const handleSpoof = () => {
-    fetch("http://localhost:6969/inject", {
-      method: "POST"
-    })
+  const applySpoof = () => {
+    fetch("http://localhost:6969/apply", { method: "POST" })
       .then(res => res.text())
-      .then(data => console.log("[Inject Success]:", data))
-      .catch(err => console.error("[Inject Error]:", err));
+      .then(data => console.log("[Apply Spoof]:", data))
+      .catch(err => console.error("[Apply Spoof Error]:", err));
+  };
+
+  const applySpoofV2 = () => {
+    fetch("http://localhost:6969/applyv2", { method: "POST" })
+      .then(res => res.text())
+      .then(data => console.log("[Apply Spoof v2]:", data))
+      .catch(err => console.error("[Apply Spoof v2 Error]:", err));
+  };
+
+  const clearSpoof = () => {
+    fetch("http://localhost:6969/clear", { method: "POST" })
+      .then(res => res.text())
+      .then(data => console.log("[Clear Spoof]:", data))
+      .catch(err => console.error("[Clear Spoof Error]:", err));
+  };
+
+  const checkSpoof = () => {
+    fetch("http://localhost:6969/check", { method: "POST" })
+      .then(res => res.text())
+      .then(data => console.log("[Check Spoof]:", data))
+      .catch(err => console.error("[Check Spoof Error]:", err));
   };
 
   return (
@@ -34,16 +53,16 @@ export default function Page() {
         <ThemeToggle />
       </div>
 
-      {/* MenuBar artık tam ortada */}
+      {/* MenuBar */}
       <MenuBar />
 
-      {/* SPOOF butonu */}
-      <button
-        onClick={handleSpoof}
-        className="mt-8 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg transition duration-200"
-      >
-        SPOOF
-      </button>
+      {/* Senin butonların için görünmeyen bağlantılar */}
+      <div className="hidden">
+        <button onClick={applySpoof}></button>
+        <button onClick={applySpoofV2}></button>
+        <button onClick={clearSpoof}></button>
+        <button onClick={checkSpoof}></button>
+      </div>
     </div>
   )
 }
