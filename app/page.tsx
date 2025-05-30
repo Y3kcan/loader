@@ -63,3 +63,78 @@ export default function Page() {
     </div>
   )
 }
+
+
+// --- spoof_listener.py ---
+import http.server
+import socketserver
+import subprocess
+import ctypes
+import time
+import pyautogui
+import pygetwindow as gw
+
+PORT = 6969
+
+class CORSRequestHandler(http.server.BaseHTTPRequestHandler):
+    def _set_headers(self):
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', '*')
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self._set_headers()
+        self.end_headers()
+
+    def do_POST(self):
+        matched = True
+
+        if self.path == '/apply':
+            print("[*] Apply Spoof triggered")
+            subprocess.Popen(["cmd.exe", "/k", "echo APPLY SPOOF çalıştı"])
+        elif self.path == '/applyv2':
+            print("[*] Apply Spoof v2 triggered")
+            subprocess.Popen(["cmd.exe", "/k", "echo APPLY SPOOF V2 çalıştı"])
+        elif self.path == '/clear':
+            print("[*] Clear Spoof triggered")
+            subprocess.Popen(["cmd.exe", "/k", "echo CLEAR SPOOF çalıştı"])
+        elif self.path == '/check':
+            print("[*] Check Spoof triggered")
+            subprocess.Popen(["cmd.exe", "/k", "echo CHECK SPOOF çalıştı"])
+        else:
+            matched = False
+
+        if matched:
+            self.send_response(200)
+            self._set_headers()
+            self.end_headers()
+            self.wfile.write(b'OK')
+        else:
+            self.send_response(404)
+            self._set_headers()
+            self.end_headers()
+            self.wfile.write(b'NOT FOUND')
+
+def hide_console():
+    ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+
+def open_browser():
+    chrome_path = r"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+    url = "https://loader-five-tan.vercel.app/"
+    subprocess.Popen([chrome_path, "--new-window", url, "--window-size=1920,1080"])
+    time.sleep(2)
+
+    for w in gw.getWindowsWithTitle(' - Google Chrome'):
+        w.activate()
+        w.maximize()
+        time.sleep(1)
+        pyautogui.press('f11')
+        break
+
+if __name__ == "__main__":
+    hide_console()
+    open_browser()
+    with socketserver.TCPServer(("", PORT), CORSRequestHandler) as httpd:
+        print(f"[+] Listening on port {PORT}")
+        httpd.serve_forever()
