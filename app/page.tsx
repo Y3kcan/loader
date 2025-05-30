@@ -1,3 +1,4 @@
+// --- page.tsx ---
 "use client"
 
 import { MenuBar } from "@/components/menu-bar"
