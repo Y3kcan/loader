@@ -9,81 +9,93 @@ import { useTheme } from "next-themes"
 interface MenuItem {
   icon: React.ReactNode
   label: string
+  onClick: () => void
   gradient: string
   iconColor: string
   fillColor: string
   solidColor: string
 }
 
-const menuItems: MenuItem[] = [
-  {
-    icon: <Shield className="h-5 w-5" />,
-    label: "Apply Spoof",
-    gradient: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
-    iconColor: "text-blue-500",
-    fillColor: "linear-gradient(135deg, rgba(59,130,246,0.4) 0%, rgba(37,99,235,0.2) 100%)",
-    solidColor: "#3b82f6",
-  },
-  {
-    icon: <Shield className="h-5 w-5" />,
-    label: "Apply Spoof v2",
-    gradient: "radial-gradient(circle, rgba(147,51,234,0.15) 0%, rgba(126,34,206,0.06) 50%, rgba(107,33,168,0) 100%)",
-    iconColor: "text-purple-500",
-    fillColor: "linear-gradient(135deg, rgba(147,51,234,0.4) 0%, rgba(126,34,206,0.2) 100%)",
-    solidColor: "#9333ea",
-  },
-  {
-    icon: <ShieldOff className="h-5 w-5" />,
-    label: "Clear Spoof",
-    gradient: "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)",
-    iconColor: "text-red-500",
-    fillColor: "linear-gradient(135deg, rgba(239,68,68,0.4) 0%, rgba(220,38,38,0.2) 100%)",
-    solidColor: "#ef4444",
-  },
-  {
-    icon: <Search className="h-5 w-5" />,
-    label: "Check Spoof",
-    gradient: "radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(147,51,234,0.06) 50%, rgba(126,34,206,0) 100%)",
-    iconColor: "text-violet-500",
-    fillColor: "linear-gradient(135deg, rgba(168,85,247,0.4) 0%, rgba(147,51,234,0.2) 100%)",
-    solidColor: "#a855f7",
-  },
-]
-
-const itemVariants = {
-  initial: { rotateX: 0, opacity: 1 },
-  hover: { rotateX: -90, opacity: 0 },
+interface MenuBarProps {
+  onApplySpoof: () => void
+  onApplySpoofV2: () => void
+  onClearSpoof: () => void
+  onCheckSpoof: () => void
 }
 
-const backVariants = {
-  initial: { rotateX: 90, opacity: 0 },
-  hover: { rotateX: 0, opacity: 1 },
-}
-
-const glowVariants = {
-  initial: { opacity: 0, scale: 0.8 },
-  hover: {
-    opacity: 1,
-    scale: 2,
-    transition: {
-      opacity: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
-      scale: { duration: 0.5, type: "spring", stiffness: 300, damping: 25 },
-    },
-  },
-}
-
-const sharedTransition = {
-  type: "spring",
-  stiffness: 100,
-  damping: 20,
-  duration: 0.5,
-}
-
-export function MenuBar() {
+export function MenuBar({ onApplySpoof, onApplySpoofV2, onClearSpoof, onCheckSpoof }: MenuBarProps) {
   const { theme } = useTheme()
   const [selectedItem, setSelectedItem] = useState<number | null>(null)
   const [progress, setProgress] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
+
+  const menuItems: MenuItem[] = [
+    {
+      icon: <Shield className="h-5 w-5" />,
+      label: "Apply Spoof",
+      onClick: onApplySpoof,
+      gradient: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)",
+      iconColor: "text-blue-500",
+      fillColor: "linear-gradient(135deg, rgba(59,130,246,0.4) 0%, rgba(37,99,235,0.2) 100%)",
+      solidColor: "#3b82f6",
+    },
+    {
+      icon: <Shield className="h-5 w-5" />,
+      label: "Apply Spoof v2",
+      onClick: onApplySpoofV2,
+      gradient: "radial-gradient(circle, rgba(147,51,234,0.15) 0%, rgba(126,34,206,0.06) 50%, rgba(107,33,168,0) 100%)",
+      iconColor: "text-purple-500",
+      fillColor: "linear-gradient(135deg, rgba(147,51,234,0.4) 0%, rgba(126,34,206,0.2) 100%)",
+      solidColor: "#9333ea",
+    },
+    {
+      icon: <ShieldOff className="h-5 w-5" />,
+      label: "Clear Spoof",
+      onClick: onClearSpoof,
+      gradient: "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)",
+      iconColor: "text-red-500",
+      fillColor: "linear-gradient(135deg, rgba(239,68,68,0.4) 0%, rgba(220,38,38,0.2) 100%)",
+      solidColor: "#ef4444",
+    },
+    {
+      icon: <Search className="h-5 w-5" />,
+      label: "Check Spoof",
+      onClick: onCheckSpoof,
+      gradient: "radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(147,51,234,0.06) 50%, rgba(126,34,206,0) 100%)",
+      iconColor: "text-violet-500",
+      fillColor: "linear-gradient(135deg, rgba(168,85,247,0.4) 0%, rgba(147,51,234,0.2) 100%)",
+      solidColor: "#a855f7",
+    },
+  ]
+
+  const itemVariants = {
+    initial: { rotateX: 0, opacity: 1 },
+    hover: { rotateX: -90, opacity: 0 },
+  }
+
+  const backVariants = {
+    initial: { rotateX: 90, opacity: 0 },
+    hover: { rotateX: 0, opacity: 1 },
+  }
+
+  const glowVariants = {
+    initial: { opacity: 0, scale: 0.8 },
+    hover: {
+      opacity: 1,
+      scale: 2,
+      transition: {
+        opacity: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+        scale: { duration: 0.5, type: "spring", stiffness: 300, damping: 25 },
+      },
+    },
+  }
+
+  const sharedTransition = {
+    type: "spring",
+    stiffness: 100,
+    damping: 20,
+    duration: 0.5,
+  }
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined
@@ -122,26 +134,11 @@ export function MenuBar() {
     }
   }, [isProcessing, progress, selectedItem])
 
-  const handleItemClick = (index: number, label: string) => {
+  const handleItemClick = (index: number, action: () => void) => {
     setSelectedItem(index)
     setProgress(0)
     setIsProcessing(true)
-
-    const endpoints: Record<string, string> = {
-      "Apply Spoof": "/apply",
-      "Apply Spoof v2": "/applyv2",
-      "Clear Spoof": "/clear",
-      "Check Spoof": "/check",
-    }
-
-    const endpoint = endpoints[label]
-
-    if (endpoint) {
-      fetch(`http://localhost:6969${endpoint}`, { method: "POST" })
-        .then(res => res.text())
-        .then(data => console.log(`[${label} Success]:`, data))
-        .catch(err => console.error(`[${label} Error]:`, err))
-    }
+    action()
   }
 
   if (!isProcessing && (selectedItem === null || progress !== 100)) {
@@ -173,7 +170,7 @@ export function MenuBar() {
                   }}
                 />
                 <motion.button
-                  onClick={() => handleItemClick(index, item.label)}
+                  onClick={() => handleItemClick(index, item.onClick)}
                   className="flex items-center justify-center gap-2 px-4 py-2 relative z-10 bg-transparent transition-colors rounded-xl cursor-pointer border-none text-muted-foreground group-hover:text-foreground"
                   variants={itemVariants}
                   transition={sharedTransition}
@@ -185,7 +182,7 @@ export function MenuBar() {
                   <span>{item.label}</span>
                 </motion.button>
                 <motion.button
-                  onClick={() => handleItemClick(index, item.label)}
+                  onClick={() => handleItemClick(index, item.onClick)}
                   className="flex items-center justify-center gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent transition-colors rounded-xl cursor-pointer border-none text-muted-foreground group-hover:text-foreground"
                   variants={backVariants}
                   transition={sharedTransition}
